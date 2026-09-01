@@ -1,0 +1,30 @@
+[tools]
+rust = "1.91.1"
+
+[env]
+RUST_BACKTRACE = "1"
+AWS_PROFILE = "datadeft-edgeview"
+
+[tasks.build]
+description = "Build the production binary"
+run = "cargo build --release"
+
+[tasks."update:vectorian"]
+description = "Refresh current-year stats for www.vectorian.be"
+depends = ["build"]
+run = './target/release/edgeview -c edgeview.toml report --year {{ now() | date(format="%Y") }} --site www.vectorian.be'
+
+[tasks."update:datadeft"]
+description = "Refresh current-year stats for www.datadeft.eu"
+depends = ["build"]
+run = './target/release/edgeview -c edgeview.toml report --year {{ now() | date(format="%Y") }} --site www.datadeft.eu'
+
+[tasks."update:dev"]
+description = "Refresh current-year stats for dev.l1x.be"
+depends = ["build"]
+run = './target/release/edgeview -c edgeview.toml report --year {{ now() | date(format="%Y") }} --site dev.l1x.be'
+
+[tasks."update:all"]
+description = "Refresh current-year stats for all configured domains"
+depends = ["build"]
+run = './target/release/edgeview -c edgeview.toml report --year {{ now() | date(format="%Y") }}'
